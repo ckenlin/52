@@ -1,592 +1,316 @@
-import turtle
+import os
 import random
-
-board = [['','',''],['','',''],['','','']]
-#move number
-n = [0]
-#P(Player vs Player) or B(Player vs Bot)
-opponent= ['']
-#Who goes first(Player vs Bot)
-first = ['']
-#player(X/O)
-p = ['']
-#bot(X/O)
-b = ['']
-
-def home(x,y):
-    #data reset
-    for i in range(3):
-        for j in range(3):
-            board[i][j] = ''
-    n[0] = 0
-    opponent[0] = ''
-    first[0] = ''
-    b[0] = ''
-    p[0] = ''
-    
-    #menu
-    turtle.hideturtle()
-    turtle.speed(0)
-    turtle.clear()
-    turtle.title("Tic-Tac-Toe")
-    draw_home()
-    turtle.onscreenclick(homeselect)
-    turtle.mainloop()
-
-def homeselect(x,y):
-    #button1
-    if x >= -150 and x <= -90 and y >= -170 and y <= -150:
-        menu1()
-    #button2
-    elif x >= -35 and x <= 35 and y >= -170 and y <= -150:
-        menu2()
-    #button3
-    elif x >= 90 and x <= 160 and y >= -170 and y <= -150:
-        opponentmenu()
-
-def opponentmenu():
-    draw_opponentmenu()
-    turtle.onscreenclick(opponentselect)
-    turtle.mainloop()
-
-def opponentselect(x,y):
-    #Player vs Bot
-    if x >= -180 and x <= -90 and y >= -170 and y <= -150:
-        opponent[0] = "B"
-        pvbmenu()
-    #Player vs Player
-    elif x >= 90 and x <= 190 and y >= -170 and y <= -150:
-        opponent[0] = "P"
-        start()
-
-def pvbmenu():
-    draw_pvbmenu()
-    turtle.onscreenclick(pvbselect)
-    turtle.mainloop()
-
-def pvbselect(x,y):
-    #Bot
-    if x >= -150 and x <= -90 and y >= -170 and y <= -150:
-        first[0] = "B"
-        b[0] = "X"
-        p[0] = "O"
-        start()
-    #Player
-    elif x >= 90 and x <= 160 and y >= -170 and y <= -150:
-        first[0] = "P"
-        b[0] = "O"
-        p[0] = "X"
-        start()
-
-def start():
-    draw_board()
-    #Player vs Bot(first)
-    if opponent[0] == "B" and first[0] == "B":
-        bot()
-    turtle.onscreenclick(play)
-    turtle.mainloop()
-
-def play(x,y):
-    #1
-    if x >= -150 and x <= -50 and y >= 50 and y <= 150:
-        if board[0][0] == '':
-            if n[0] % 2 == 0:
-                board[0][0] = "X"
-                n[0] = n[0] + 1
-                cross(-140,140)  
-            else:
-                board[0][0] = "O"
-                n[0] = n[0] + 1
-                circle(-60,100)
-            
-    #2
-    elif x >= -50 and x <= 50 and y >= 50 and y <= 150:
-        if board[0][1] == '':
-            if n[0] % 2 == 0:
-                board[0][1] = "X"
-                n[0] = n[0] + 1
-                cross(-40,140)
-            else:
-                board[0][1] = "O"
-                n[0] = n[0] + 1
-                circle(40,100)
-        
-    #3
-    elif x >= 50 and x <= 150 and y >= 50 and y <= 150:
-        if board[0][2] == '':
-            if n[0] % 2 == 0:
-                board[0][2] = "X"
-                n[0] = n[0] + 1
-                cross(60,140)
-            else:
-                board[0][2] = "O"
-                n[0] = n[0] + 1
-                circle(140,100)
-        
-    #4
-    elif x >= -150 and x <= -50 and y >= -50 and y <= 50:
-        if board[1][0] == '':
-            if n[0]% 2 == 0:
-                board[1][0] = "X"
-                n[0] = n[0] + 1
-                cross(-140,40)
-            else:
-                board[1][0] = "O"
-                n[0] = n[0] + 1
-                circle(-60,0)
-        
-    #5
-    elif x >= -50 and x <= 50 and y >= -50 and y <= 50:
-        if board[1][1] == '':
-            if n[0] % 2 == 0:
-                board[1][1] = "X"
-                n[0] = n[0] + 1
-                cross(-40,40)
-            else:
-                board[1][1] = "O"
-                n[0] = n[0] + 1
-                circle(40,0)
-        
-    #6
-    elif x >= 50 and x <= 150 and y >= -50 and y <= 50:
-        if board[1][2] == '':
-            if n[0] % 2 == 0:
-                board[1][2] = "X"
-                n[0] = n[0] + 1
-                cross(60,40)
-            else:
-                board[1][2] = "O"
-                n[0] = n[0] + 1
-                circle(140,0)
-    
-    #7
-    elif x >= -150 and x <= -50 and y >= -150 and y <= -50:
-        if board[2][0] == '':
-            if n[0] % 2 == 0:
-                board[2][0] = "X"
-                n[0] = n[0] + 1
-                cross(-140,-60)
-            else:
-                board[2][0] = "O"
-                n[0] = n[0] + 1
-                circle(-60,-100)
-    
-    #8
-    elif x >= -50 and x <= 50 and y >= -150 and y <= -50:
-        if board[2][1] == '':
-            if n[0] % 2 == 0:
-                board[2][1] = "X"
-                n[0] = n[0] + 1
-                cross(-40,-60)
-            else:
-                board[2][1] = "O"
-                n[0] = n[0] + 1
-                circle(40,-100)
-    
-    #9
-    elif x >= 50 and x <= 150 and y >= -150 and y <= -50:
-        if board[2][2] == '':
-            if n[0] % 2 == 0:
-                board[2][2] = "X"
-                n[0] = n[0] + 1
-                cross(60,-60)
-            else:
-                board[2][2] = "O"
-                n[0] = n[0] + 1
-                circle(140,-100)
-    #check if someone won
-    score()
-
-    #Player vs Bot
-    if opponent[0] == "B":
-        if first[0] == "B" and n[0]%2 == 0:
-            bot()
-        elif first[0] == "P" and n[0]%2 == 1:
-            bot()
+import time
 
 
-def bot():
-    #vertical
-    boardt = [[board[j][i] for j in range(3)] for i in range(3)]
-    #diagonal    
-    boardd1 = [board[0][0],board[1][1],board[2][2]]
-    boardd2 = [board[0][2],board[1][1],board[2][0]]
-    
-    #first
-    if n[0] == 0:
-        move = random.randint(1,5)
-        #corner
-        if move == 1:
-            play(-100,100)
-        elif move == 2:
-            play(100,100)
-        elif move == 3:
-            play(-100,-100)
-        elif move == 4:
-            play(100,-100)
-        #center
-        elif move == 5:
-            play(0,0)
+def init_board():
+    board = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    return board
 
-    #second
-    elif n[0] == 1:
-        if board[1][1] == "":
-            play(0,0)
+
+def get_move(board, player):
+    row = 3
+    col = 3
+    valid_moves = ['a1', 'a2', 'a3', 'b1', 'b2', 'b3', 'c1', 'c2', 'c3']
+    move = input('Make your move: ')
+    if move.lower() == 'quit':
+        quit()
+    elif move.lower() not in valid_moves:
+        print('Not a valid move!')
+        return get_move(board, player)
+    if 'a' in move.lower():
+        row = 0
+    elif 'b' in move.lower():
+        row = 1
+    elif 'c' in move.lower():
+        row = 2
+    if '1' in move:
+        col = 0
+    elif '2' in move:
+        col = 1
+    elif '3' in move:
+        col = 2
+    if board[row][col] != 0:
+        print('Place already taken')
+        return get_move(board, player)
+    return (row, col)
+
+
+def get_ai_move(board, player):
+    '''
+    row = random.randint(0, 2)
+    col = random.randint(0, 2)
+    while board[row][col] != 0:
+        row = random.randint(0, 2)
+        col = random.randint(0, 2)
+    return (row, col)
+    '''
+    corners = [board[0][0], board[0][2], board[2][0], board[2][2]]
+    winning_cases = [[board[0][0], board[0][1], board[0][2]], [board[1][0], board[1][1], board[1][2]],
+                     [board[2][0], board[2][1], board[2][2]]]
+    winning_cases2 = [[board[0][0], board[1][0], board[2][0]], [board[0][1], board[1][1], board[2][1]],
+                      [board[0][2], board[1][2], board[2][2]]]
+    winning_cases3 = [board[0][0], board[1][1], board[2][2]]
+    winning_cases4 = [board[0][2], board[1][1], board[2][0]]
+    for i in winning_cases:
+        if sum(i) == 4 and 0 in i:
+            row = board.index(i)
+            col = i.index(0)
+            return(row, col)
+    for i in winning_cases2:
+        if sum(i) == 4 and 0 in i:
+            col = winning_cases2.index(i)
+            row = i.index(0)
+            return(row, col)
+    if sum(winning_cases3) == 4 and 0 in winning_cases3:
+        row = winning_cases3.index(0)
+        col = winning_cases3.index(0)
+        return(row, col)
+    if sum(winning_cases4) == 4 and 0 in winning_cases4:
+        if winning_cases4.index(0) == 1:
+            row, col = 1, 1
+            return (row, col)
+        elif winning_cases4.index(0) == 0:
+            row, col = 0, 2
+            return(row, col)
+        elif winning_cases4.index(0) == 2:
+            row, col = 2, 0
+            return(row, col)
+    for i in winning_cases:
+        if sum(i) == 2 and 1 in i:
+            row = board.index(i)
+            col = i.index(0)
+            return(row, col)
+    for i in winning_cases2:
+        if sum(i) == 2 and 1 in i:
+            col = winning_cases2.index(i)
+            row = i.index(0)
+            return(row, col)
+    if sum(winning_cases3) == 2 and 1 in winning_cases3:
+        row = winning_cases3.index(0)
+        col = winning_cases3.index(0)
+        return(row, col)
+    if sum(winning_cases4) == 2 and 1 in winning_cases4:
+        if winning_cases4.index(0) == 1:
+            row, col = 1, 1
+            return (row, col)
+        elif winning_cases4.index(0) == 0:
+            row, col = 0, 2
+            return(row, col)
+        elif winning_cases4.index(0) == 2:
+            row, col = 2, 0
+            return(row, col)
+    if board[1][1] == 0:
+        row, col = 1, 1
+        return(row, col)
+    if 0 in corners:
+        row = random.randrange(0, 3, 2)
+        col = random.randrange(0, 3, 2)
+        while board[row][col] != 0:
+            row = random.randrange(0, 3, 2)
+            col = random.randrange(0, 3, 2)
+        return(row, col)
+    row = random.randint(0, 2)
+    col = random.randint(0, 2)
+    while board[row][col] != 0:
+        row = random.randint(0, 2)
+        col = random.randint(0, 2)
+    return (row, col)
+
+
+def mark(board, player, row, col):
+    try:
+        if board[row][col] == 0:
+            board[row][col] = player
+    except IndexError:
+        return
+
+
+def has_won(board, player):
+    if (board[0][0] == board[0][1] == board[0][2] == player or board[1][0] == board[1][1] == board[1][2] == player or
+        board[2][0] == board[2][1] == board[2][2] == player or board[0][0] == board[1][0] == board[2][0] == player or
+        board[0][1] == board[1][1] == board[2][1] == player or board[0][2] == board[1][2] == board[2][2] == player or
+            board[0][0] == board[1][1] == board[2][2] == player or board[0][2] == board[1][1] == board[2][0] == player):
+        return True
+    return False
+
+
+def is_full(board):
+    if 0 in board[0]:
+        return False
+    elif 0 in board[1]:
+        return False
+    elif 0 in board[2]:
+        return False
+    else:
+        return True
+
+
+def print_board(board):
+    """Prints a 3-by-3 board on the screen with borders."""
+    newboard = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+    for x in range(len(board)):
+        for i in range(len(board[0])):
+            if board[x][i] == 0:
+                newboard[x][i] = '.'
+            if board[x][i] == 1:
+                newboard[x][i] = 'X'
+            if board[x][i] == 2:
+                newboard[x][i] = 'O'
+    print('''
+               1   2   3
+            A  {} | {} | {}
+              ---+---+---
+            B  {} | {} | {}
+              ---+---+---
+            C  {} | {} | {}
+        '''.format(newboard[0][0], newboard[0][1], newboard[0][2], newboard[1][0], newboard[1][1], newboard[1][2],
+                   newboard[2][0], newboard[2][1], newboard[2][2]))
+
+
+def print_result(winner):
+    if winner == 0:
+        print("It's a tie! \n")
+    if winner == 1:
+        print('X won! \n')
+    if winner == 2:
+        print('O won! \n')
+
+
+def tictactoe_game(mode='HUMAN-HUMAN'):
+    if mode == 'HUMAN-HUMAN':
+        board = init_board()
+        while not has_won(board, 1) and not has_won(board, 2) and not is_full(board):
+            os.system('cls')
+            print_board(board)
+            row, col = get_move(board, 1)
+            mark(board, 1, row, col)
+            os.system('cls')
+            print_board(board)
+            if not has_won(board, 1) and not is_full(board):
+                row, col = get_move(board, 2)
+                mark(board, 2, row, col)
+                print_board(board)
+
+        if has_won(board, 1):
+            winner = 1
+        elif has_won(board, 2):
+            winner = 2
         else:
-            move = random.randint(1,4)
-            #corner
-            if move == 1:
-                play(-100,100)
-            elif move == 2:
-                play(100,100)
-            elif move == 3:
-                play(-100,-100)
-            elif move == 4:
-                play(100,-100)
+            winner = 0
+        print_result(winner)
+        after_menu()
+    elif mode == 'HUMAN-AI':
+        board = init_board()
+        while not has_won(board, 1) and not has_won(board, 2) and not is_full(board):
+            os.system('cls')
+            print_board(board)
+            row, col = get_move(board, 1)
+            mark(board, 1, row, col)
+            os.system('cls')
+            print_board(board)
+            if not has_won(board, 1) and not is_full(board):
+                row, col = get_ai_move(board, 2)
+                mark(board, 2, row, col)
+                os.system('cls')
+                print_board(board)
 
-    #win_horizontal
-    elif board[0] == [b[0],b[0],""]:
-        play(100,100)
-    elif board[0] == [b[0],"",b[0]]:
-        play(0,100)
-    elif board[0] == ["",b[0],b[0]]:
-        play(-100,100)
-    
-    elif board[1] == [b[0],b[0],""]:
-        play(100,0)
-    elif board[1] == [b[0],"",b[0]]:
-        play(0,0)
-    elif board[1] == ["",b[0],b[0]]:
-        play(-100,0)
-    
-    elif board[2] == [b[0],b[0],""]:
-        play(100,-100)
-    elif board[2] == [b[0],"",b[0]]:
-        play(0,-100)
-    elif board[2] == ["",b[0],b[0]]:
-        play(-100,-100) 
-    
-    #win_vertical 
-    elif boardt[0] == [b[0],b[0],""]:
-        play(-100,-100)
-    elif boardt[0] == [b[0],"",b[0]]:
-        play(-100,0)
-    elif boardt[0] == ["",b[0],b[0]]:
-        play(-100,100)
-    
-    elif boardt[1] == [b[0],b[0],""]:
-        play(0,-100)
-    elif boardt[1] == [b[0],"",b[0]]:
-        play(0,0)
-    elif boardt[1] == [b[0],b[0],b[0]]:
-        play(0,100)
-    
-    elif boardt[2] == [b[0],b[0],""]:
-        play(100,-100)
-    elif boardt[2] == [b[0],"",b[0]]:
-        play(100,0)
-    elif boardt[2] == ["",b[0],b[0]]:
-        play(100,100)    
-    
-    #win_diagonal
-    elif boardd1 == [b[0],b[0],""]:
-        play(100,-100)
-    elif  boardd1 == [b[0],"",b[0]]:
-        play(0,0)
-    elif boardd1 == ["",b[0],b[0]]:
-        play(-100,100)
-        
-    elif boardd2 == [b[0],b[0],""]:
-        play(-100,-100)
-    elif  boardd2 == [b[0],"",b[0]]:
-        play(0,0)
-    elif boardd2 == ["",b[0],b[0]]:
-        play(100,100)    
-    
-    #block_vertical
-    elif board[0] == [p[0],p[0],""]:
-        play(100,100)
-    elif board[0] == [p[0],"",p[0]]:
-        play(0,100)
-    elif board[0] == ["",p[0],p[0]]:
-        play(-100,100)
-    
-    elif board[1] == [p[0],p[0],""]:
-        play(100,0)
-    elif board[1] == [p[0],"",p[0]]:
-        play(0,0)
-    elif board[1] == ["",p[0],p[0]]:
-        play(-100,0)
-    
-    elif board[2] == [p[0],p[0],""]:
-        play(100,-100)
-    elif board[2] == [p[0],"",p[0]]:
-        play(0,-100)
-    elif board[2] == ["",p[0],p[0]]:
-        play(-100,-100) 
+        if has_won(board, 1):
+            winner = 1
+        elif has_won(board, 2):
+            winner = 2
+        else:
+            winner = 0
+        print_result(winner)
+        after_menu()
+    elif mode == 'AI-HUMAN':
+        board = init_board()
+        while not has_won(board, 1) and not has_won(board, 2) and not is_full(board):
+            row, col = get_ai_move(board, 2)
+            mark(board, 1, row, col)
+            os.system('cls')
+            print_board(board)
+            if not has_won(board, 1) and not is_full(board):
+                row, col = get_move(board, 1)
+                mark(board, 2, row, col)
+                os.system('cls')
+                print_board(board)
+        if has_won(board, 1):
+            winner = 1
+        elif has_won(board, 2):
+            winner = 2
+        else:
+            winner = 0
+        print_result(winner)
+        after_menu()
 
-    #block_horizontal
-    elif boardt[0] == [p[0],p[0],""]:
-        play(-100,-100)
-    elif boardt[0] == [p[0],"",p[0]]:
-        play(-100,0)
-    elif boardt[0] == ["",p[0],p[0]]:
-        play(-100,100)
-    
-    elif boardt[1] == [p[0],p[0],""]:
-        play(0,-100)
-    elif boardt[1] == [p[0],"",p[0]]:
-        play(0,0)
-    elif boardt[1] == ["",p[0],p[0]]:
-        play(0,100)
-
-    elif boardt[2] == [p[0],p[0],""]:
-        play(100,-100)
-    elif boardt[2] == [p[0],"",p[0]]:
-        play(100,0)
-    elif boardt[2] == ["",p[0],p[0]]:
-        play(100,100)
-    
-    #block_diagonal
-    elif boardd1 == [p[0],p[0],""]:
-        play(100,-100)
-    elif  boardd1 == [p[0],"",p[0]]:
-        play(0,0)
-    elif boardd1 == ["",p[0],p[0]]:
-        play(-100,100)
-        
-    elif boardd2 == [p[0],p[0],""]:
-        play(-100,-100)
-    elif  boardd2 == [p[0],"",p[0]]:
-        play(0,0)
-    elif boardd2 == ["",p[0],p[0]]:
-        play(100,100)
-    
-    #corner
-    elif board[0][2] == "":
-        play(100,100)
-    elif board[2][0] == "":
-        play(-100,-100)
-    elif board[2][2] == "":
-        play(100,-100)
-    elif board[0][0] == "":
-        play(-100,100)
-    #center
-    elif board[1][1] == "":
-        play(0,0)
-    #sides
-    elif board[0][1] == "":
-        play(0,100)
-    elif board[1][0] == "":
-        play (-100,0)
-    elif board[1][2] == "":
-        play(100,0)
-    elif board[2][1] == "":
-        play(0,-100)
+    elif mode == 'AI-AI':
+        board = init_board()
+        while not has_won(board, 1) and not has_won(board, 2) and not is_full(board):
+            row, col = get_ai_move(board, 2)
+            mark(board, 1, row, col)
+            os.system('cls')
+            print_board(board)
+            time.sleep(2)
+            if not has_won(board, 1) and not is_full(board):
+                row, col = get_ai_move(board, 2)
+                mark(board, 2, row, col)
+                os.system('cls')
+                print_board(board)
+                time.sleep(2)
+        if has_won(board, 1):
+            winner = 1
+        elif has_won(board, 2):
+            winner = 2
+        else:
+            winner = 0
+        print_result(winner)
+        after_menu()
 
 
-def score():
-    #horizontal
-    for i in range(3):
-        if board[i] == ["X","X","X"]:
-            line(-150,100-100*i,150,100-100*i,"red")
-            winnerp1()
-        elif board[i] == ["O","O","O"]:
-            line(-150,100-100*i,150,100-100*i,"green")
-            winnerp2()
-    
-    #vertical 
-    for i in range(3):
-        if board[0][i] == "X" and board[1][i] == "X" and board[2][i] == "X":
-            line(-100+100*i,150,-100+100*i,-150,"red")
-            winnerp1()
-        elif board[0][i] == "O" and board[1][i] == "O" and board[2][i] == "O":
-            line(-100+100*i,150,-100+100*i,-150,"green")
-            winnerp2()
-    
-    #diagonal
-    for i in range(2):
-        if board[0][0+(2*i)] == "X" and board[1][1] == "X" and board[2][2-(2*i)] == "X":
-            line(-150+300*i,150,150-300*i,-150,"red")
-            winnerp1()
-        elif board[0][0+(2*i)] == "O" and board[1][1] == "O" and board[2][2-(2*i)] == "O":
-            line(-150+300*i,150,150-300*i,-150,"green")
-            winnerp2()
+def after_menu():
+    print('1.Play again')
+    print('2.Menu')
+    print('3.Quit')
+    action = input('Play again?')
+    while action != '1' or action != '2' or action != '3':
+        if action == '1':
+            tictactoe_game('AI-AI')
+        elif action == '2':
+            main_menu()
+        elif action == '3':
+            quit()
+        else:
+            action = input('Play again?')
 
-    #draw
-    if n[0] == 9:
-        draw()
 
-def winnerp1():
-    turtle.onscreenclick(None)
-    turtle.pu()
-    turtle.goto(0,200)
-    turtle.color("red")
-    if opponent[0] == "B" and first[0] == "B":
-        turtle.write("Bot won this game",align="center", font=("Futura",30))
+def main_menu():
+    os.system('cls')
+    print('''
+      ________________   _________   ______   __________  ______
+     /_  __/  _/ ____/  /_  __/   | / ____/  /_  __/ __ \/ ____/
+      / /  / // /  ______/ / / /| |/ /  ______/ / / / / / __/
+     / / _/ // /__/_____/ / / ___ / /__/_____/ / / /_/ / /___
+    /_/ /___/\____/    /_/ /_/  |_\____/    /_/  \____/_____/
+        ''')
+    print('1.HUMAN-HUMAN')
+    print('2.HUMAN-AI')
+    print('3.AI-HUMAN')
+    print('4.AI-AI')
+    select = input('Choose game mode!')
+    if select == 'quit':
+        quit()
+    elif select == str(1):
+        tictactoe_game('HUMAN-HUMAN')
+    elif select == str(2):
+        tictactoe_game('HUMAN-AI')
+    elif select == str(3):
+        tictactoe_game('AI-HUMAN')
+    elif select == str(4):
+        tictactoe_game('AI-AI')
     else:
-        turtle.write("Player 1 won this game",align="center", font=("Futura",30))
-    turtle.goto(250,-200)
-    turtle.write("(Click anywhere to return to the main menu)",align="right",font=(0.0000001))
-    turtle.onscreenclick(home)
-    turtle.mainloop()
-    
-def winnerp2():
-    turtle.onscreenclick(None)
-    turtle.pu()
-    turtle.goto(0,200)
-    turtle.color("Green")
-    if opponent[0] == "B" and first[0] == "P":
-        turtle.write("Bot won this game",align="center", font=("Futura",30))
-    else:
-        turtle.write("Player 2 won this game",align="center", font=("Futura",30))
-    turtle.goto(250,-200)
-    turtle.write("(Click anywhere to return to the main menu)",align="right",font=(0.0000001))
-    turtle.onscreenclick(home)
-    turtle.mainloop()
-
-def draw():
-    turtle.onscreenclick(None)
-    turtle.color("Blue")
-    turtle.pu()
-    turtle.goto(0,200)
-    turtle.write("Draw",align="center", font=("Futura",30))
-    turtle.goto(250,-200)
-    turtle.write("(Click anywhere to return to the main menu)",align="right",font=(0.0000001))
-    turtle.onscreenclick(home)
-    turtle.mainloop()
+        main_menu()
 
 
-def menu_button(a,b,c,d1,d2):
-    turtle.pu()
-    turtle.goto(a,b)
-    turtle.setheading(0)
-    turtle.pd()
-    turtle.color(c)
-    turtle.begin_fill()
-    for i in range(2):
-        turtle.forward(d1)
-        turtle.right(90)
-        turtle.forward(d2)
-        turtle.right(90)
-    turtle.end_fill()  
-
-def cross(a,b):
-    turtle.color("red")
-    turtle.pu()
-    turtle.goto(a,b)
-    turtle.pd()
-    turtle.goto(a+80,b-80)
-    turtle.pu()
-    turtle.goto(a+80,b)
-    turtle.pd()
-    turtle.goto(a,b-80)
-
-def circle(a,b):
-    turtle.color("green")
-    turtle.pu()
-    turtle.goto(a,b)
-    turtle.pd()
-    turtle.setheading(90)
-    turtle.circle(40)
-
-def line(a1,b1,a2,b2,c):
-    turtle.pu()
-    turtle.goto(a1,b1)
-    turtle.color(c)
-    turtle.pd()
-    turtle.pensize(10)
-    turtle.goto(a2,b2)
-
-def draw_home():
-    turtle.pu()
-    turtle.goto(0,0)
-    turtle.color("red")
-    turtle.write("Tic-Tac-Toe", align="center",font=("Futura",30))
-    
-    #button1
-    menu_button(-150, -150,"blue",70,20)
-    turtle.pu()
-    turtle.goto(-115,-170)
-    turtle.color("grey")
-    turtle.write("Button1", align="center",font=(10))
-    
-    #button2
-    menu_button(-35,-150,"blue",70,20)
-    turtle.pu()
-    turtle.goto(0,-170)
-    turtle.color("grey")
-    turtle.write("Button2", align="center",font=(10))
-        
-    #button3
-    menu_button(80,-150,"blue",70,20)
-    turtle.pu()
-    turtle.goto(115,-170)
-    turtle.color("grey")
-    turtle.write("Play", align="center",font=(10))
-
-def draw_opponentmenu():
-    turtle.clear()
-    turtle.pu()
-    turtle.goto(0,0)
-    turtle.color("red")
-    turtle.write("Choose your opponent", align="center",font=("Futura",30))
-    
-    #Player vs Bot
-    menu_button(-180, -150,"blue",100,20)
-    turtle.pu()
-    turtle.goto(-130,-170)
-    turtle.color("grey")
-    turtle.write("Player vs Bot", align="center",font=(10))
-    
-    #Player vs Player
-    menu_button(90,-150,"blue",100,20)
-    turtle.pu()
-    turtle.goto(140,-170)
-    turtle.color("grey")
-    turtle.write("Player vs Player", align="center",font=(10))
-
-def draw_pvbmenu():
-    turtle.clear()
-    turtle.pu()
-    turtle.goto(0,0)
-    turtle.color("red")
-    turtle.write("Who goes first?", align="center",font=("Futura",30))
-    
-    #button1
-    menu_button(-150, -150,"blue",70,20)
-    turtle.pu()
-    turtle.goto(-115,-170)
-    turtle.color("grey")
-    turtle.write("Bot", align="center",font=(10))
-
-    #button2
-    menu_button(90,-150,"blue",70,20)
-    turtle.pu()
-    turtle.goto(125,-170)
-    turtle.color("grey")
-    turtle.write("Player", align="center",font=(10))
-
-def draw_board():
-    turtle.clear()
-    turtle.color("black")
-    turtle.pensize(5)
-
-    #horizontal
-    for i in range(2):
-        turtle.pu()
-        turtle.goto(-150,50-100*i)
-        turtle.setheading(0)
-        turtle.pd()
-        turtle.forward(300)
-
-    #vertical
-    for i in range(2):
-        turtle.pu()
-        turtle.goto(-50+100*i,150)
-        turtle.setheading(270)
-        turtle.pd()
-        turtle.forward(300)
-    
 if __name__ == '__main__':
-    home(0,0)
+    main_menu()
