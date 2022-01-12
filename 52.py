@@ -1,102 +1,113 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+"""Adapted from https://medium.com/swlh/tic-tac-toe-and-deep-neural-networks-ea600bc53f51"""
+import os
+import time
 
-"""
-Work with lists to create a tic tac toe.
-The program has limited checks on dealing with errors.
-You could add code to check for a winner or tie game.
-Or you could add som intelligence to the computer move.
-"""
+import streamlit as st
+import tensorflow as tf
+from tensorflow import keras
 
-def printGame(board):
+from game import model, game
+from game.STProgressLogger import STProgressLogger
+
+# Reset internal session state
+tf.keras.backend.clear_session()
+
+
+def iterate_with_progress(f, count, notice_text=None):
+    """Run a function a given number of times, yielding
+    its result after each run. Show a progress bar.
     """
-    Print out the current game board.
-    """
-    print("-------        ")
-    print("|{}|{}|{}| (1,2,3)".format(board[0], board[1], board[2]))
-    print("|{}|{}|{}| (4,5,6)".format(board[3], board[4], board[5]))
-    print("|{}|{}|{}| (7,8,9)".format(board[6], board[7], board[8]))
-    print("-------        ")
+    notice = None
+    if notice_text is not None:
+        notice = st.text(notice_text)
+
+    progress_bar = st.progress(0)
+    last_update = time.time()
+    update_rate = 1.0 / 30.0
+    for ii in range(count):
+        yield f()
+        now = time.time()
+        if ii == count - 1:
+            progress_bar.progress(1.0)
+        elif (now - last_update) >= update_rate:
+            progress_bar.progress(float(ii / count))
+            last_update = now
+    progress_bar.empty()
+    if notice is not None:
+        notice.text("")
+        notice.empty()
 
 
+@st.cache(suppress_st_warning=True)
+def create_training_games(count):
+    return list(g for g in iterate_with_progress(
+        model.simulateGame,
+        count,
+        f"Building {count} simulated games..."
+    ))
 
-def isInt(s):
-    """
-    Check that a string can be converted to a integer.
-    """
+
+def get_model(num_games):
+    """Load or train our Keras model."""
+    filename = os.path.abspath(f"./model_{num_games}.h5")
+    notice = st.text(f"Loading {filename}...")
     try:
-        int(s)
-        return True
-    except ValueError:
-        return False
+        mdl = keras.models.load_model(filename)
+        notice.text(f"Loading {filename}... Done!")
+        return mdl
+    except BaseException as e:
+        print(f"Failed to load {filename}: {e}")
+        pass
 
+    notice.text(f"Training model ({num_games} games)...")
+    mdl = model.getModel()
+    if num_games > 0:
+        games = create_training_games(num_games)
 
+        x_train, x_test, y_train, y_test = model.gamesToWinLossData(games)
+        progress_logger = STProgressLogger()
 
-def place(board, what, where):
-    """
-    Place a marker on the board.
-    """
-    board[where] = what
+        history = mdl.fit(
+            x=x_train,
+            y=y_train,
+            validation_data=(x_test, y_test),
+            epochs=100,
+            batch_size=100,
+            verbose=0,
+            callbacks=[
+                progress_logger,
+            ]
+        )
 
+    notice.text(f"Training model ({num_games} games)... Done!")
+    keras.models.save_model(mdl, filename)
 
+    return mdl
 
-def placeComputer(board):
-    """
-    Place a marker on the board.
-    """
-    for position, value in enumerate(board):
-        if value == " ":
-            return position
+st.image("shall_we_play.jpg")
 
-    return False
+# Build training data
+num_training_games = st.number_input(
+    label="Num training games",
+    min_value=0,
+    value=500,
+    step=100
+)
+mdl = get_model(num_training_games)
 
+# Simulate
+num_played_games = st.number_input(
+    label="Num played games",
+    min_value=0,
+    value=50,
+    step=20,
+)
 
+if st.button("Play!"):
+    played_games = list(g for g in iterate_with_progress(
+        lambda: model.simulateGame(p1=mdl),
+        num_played_games,
+        f"Playing {num_played_games} games..."
+    ))
 
-def checkIfWinnerOrTie(board):
-    """
-    Check if there is a winner or if there is a tie game.
-    """
-    # pylint: disable=unused-argument
-    print("(Checking for winner or tie is not yet implemented)")
-
-
-
-def main():
-    """
-    Play a game of Tic Tac Toe.
-    """
-
-    # Create a list of nine spaces
-    board = [" "] * 9
-
-    print("Play against the computer.")
-    print("You start, you are X. Computer is O.")
-    print("Three in a row wins.")
-
-    while 1:
-
-        printGame(board)
-
-        position = input("Enter position (1-9) to place you X (or q for quit): ")
-
-        if position == "q":
-            break
-
-        elif isInt(position):
-            # User move
-            place(board, "X", int(position) - 1)
-            
-            # Computer move
-            computerPos = placeComputer(board)
-            if computerPos is not False:
-                place(board, "O", computerPos)
-                print("Computer moved to {}.".format(computerPos))
-
-        if checkIfWinnerOrTie(board) is True:
-            break
-
-
-if __name__ == "__main__":
-    print(__doc__)
-    input("Press enter to continue.")
-    main()
+    st.write(game.gameStats(played_games))
