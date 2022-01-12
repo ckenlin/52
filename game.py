@@ -1,4 +1,4 @@
-from qiskit import QuantumCircuit, Aer
+#from qiskit import QuantumCircuit, Aer
 import numpy as np
 import streamlit as st
 
